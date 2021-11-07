@@ -1,0 +1,45 @@
+@import url('https://fonts.googleapis.com/css?family=Muli&display=swap'); 
+
+* {
+  padding: 0;
+  margin: 0;
+  font-family: sans-serif;
+}
+
+body {
+  font-family: 'roboto', sans-serif;
+  background: #e5e5e5;
+  padding-top: 5rem;
+  display: flex;
+  justify-content: center;
+}
+
+.field {
+  padding: 10px;
+  background: #999;
+  border-radius: 10px;
+}
+
+.row {
+  display: flex;
+}
+
+.cell {
+  margin: 10px;
+  height: 100px;
+  width: 100px;
+  background: #bbb;
+  border-radius: 5px;
+}
+
+.active {
+  height: 100px;
+  width: 100px;
+  border-radius: 5px;
+  background: rgb(220, 220, 160);
+}
+
+.move-right {
+  transform: translate(0, 0);
+  transition: all .3s ease-in-out;
+}
