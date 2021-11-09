@@ -16,7 +16,7 @@ body {
 
 .board {
   padding: 10px;
-  background: #999;
+  background: #BBADA0;
   border-radius: 10px;
 }
 
@@ -28,7 +28,7 @@ body {
   margin: 10px;
   height: 100px;
   width: 100px;
-  background: #bbb;
+  background: #CDC0B4;
   border-radius: 5px;
 }
 
@@ -36,7 +36,14 @@ body {
   height: 100px;
   width: 100px;
   border-radius: 5px;
-  background: rgb(220, 220, 160);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 50px;
+  font-weight: 500;
+  color: #776E65;
+
+  background: hsl(70, 100%, 70%);
   transform: translate(0, 0);
   transition: all .3s ease-in-out;
 }
