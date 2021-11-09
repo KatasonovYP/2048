@@ -1,7 +1,5 @@
 const SIZE_OF_FIELD = 4
 
-const a = [1, 2, 3]
-
 const rows = document.querySelectorAll('.row')
 const board = document.querySelector('.board')
 
@@ -10,22 +8,40 @@ document.addEventListener('keyup', event => {
   createNewSquare()
 })
 
-createNewSquare()
 
 function move(direction) {
-  const actives = getActives()
-  const emptyCells = getEmptyCells()
-  if (direction === 'ArrowRight') {
-    for (currentCell of actives) {
-      const cells = currentCell.parentNode.querySelectorAll('.cell')
-      const index = findIndexByElem(cells, currentCell)
-      for (let i = index + 1; i < cells.length; i++) {
+  if (!direction.includes('Arrow')) {
+    return
+  }
+  let actives = getActives()
+  if (contains(['ArrowDown', 'ArrowRight'], direction)) {
+    actives = actives.reverse()
+  }
+  for (currentCell of actives) {
+    const emptyCells = getEmptyCells()
+    const cells = contains(['ArrowRight', 'ArrowLeft'], direction) ?
+                    currentCell.parentNode.querySelectorAll('.cell') : 
+                    getElementsFromCol(currentCell)
+    const index = findIndexByElem(cells, currentCell)
+    let newIndex = index
+    if (direction === 'ArrowRight' || direction === 'ArrowDown') {
+      for (let i = index; i < cells.length; i++) {
         if (contains(emptyCells, cells[i])) {
-          const active = currentCell.querySelector('.active')
-          cells[i].append(active)
-          break
+          newIndex = i
         }
       }
+    } else if (direction === 'ArrowLeft' || direction === 'ArrowUp') {
+      for (let i = index; i >= 0; i--) {
+        if (contains(emptyCells, cells[i])) {
+          newIndex = i
+        }
+      }
+    }
+    if (index !== newIndex) {
+      const active = currentCell.querySelector('.active')
+      // animateMove(active, direction, index, newIndex)
+      replaceElement(cells[newIndex], active)
+      // Ошибка в том, что я сначала обрабатываю новый элемент, а затем уже перемещаю старый
     }
   }
 }
@@ -42,6 +58,9 @@ function createNewSquare() {
     const index = getRandomNumber(0, emptyCells.length)
     const square = document.createElement('div')
     square.classList.add('active')
+    if (getRandomNumber(0, 2) == 0) {
+      square.style.background = 'rgb(220, 180, 160)'
+    }
     emptyCells[index].append(square)
   }
 }
@@ -83,4 +102,30 @@ function findIndexByElem(nodeList, element) {
 
 function contains(arr, element) {
   return arr.indexOf(element) !== -1
+}
+
+function getElementsFromCol(element) {
+  let elementsInCol = []
+  const elementsInRow = element.parentNode.querySelectorAll('.cell')
+  const index = findIndexByElem(elementsInRow, currentCell)
+  for (row of rows) {
+    const elementInCol = row.querySelectorAll('.cell')[index]
+    elementsInCol.push(elementInCol)
+  }
+  return elementsInCol
+}
+
+function animateMove(element, direction, start, end) {
+  let axis
+  if (contains(['ArrowUp', 'ArrowDown'], direction)) {
+    axis = 'Y'
+  } else {
+    axis = 'X'
+  }
+  element.style.transform = `translate${axis}(${(end - start) * 120}px)`
+}
+
+function replaceElement(newParent, element) {
+  element.style.transform = 'translateX(0)'
+  newParent.append(element)
 }
