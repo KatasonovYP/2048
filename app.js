@@ -21,6 +21,7 @@ function game(event) {
       horizontalMove('right')
       break
   }
+  generateNewActive()
 }
 
 function getField() {
@@ -50,26 +51,29 @@ function verticalMove(direction) {
   let binField = getField()
   let activePositions = getActivePositions(binField)
   let step, startValue
-  if (direction === 'up') {
-    startValue = 0
-    step = 1
-  } else if (direction === 'down') {
-    startValue = SIZE_OF_FIELD - 1
-    step = -1
-    activePositions = activePositions.reverse()
-  } else {
-    return
+  switch (direction) {
+    case 'up':
+      startValue = 0
+      step = 1
+      break;
+    case 'down':
+      startValue = SIZE_OF_FIELD - 1
+      step = -1
+      activePositions = activePositions.reverse()
+      break;
+    default:
+      return;
   }
   for (position of activePositions) {
     const y = position[0]
     const x = position[1]
-    let i = startValue
+    let i = startValue // может быть Y ом
     if (y !== startValue || !binField[y + step][x]) {
       while (!binField[i][x]) {
          i += step // TODO может быть бесконечный цикл.
       }
       const active = rows[y].querySelectorAll('.cell')[x].querySelector('.active')
-      active.style.transform = `translate(0, ${(i - y) * 120}px)`
+      active.style.transform = `translateY(${(i - y) * 120}px)`
       setTimeout(() => repl(i, active, x), 300)
       binField[y][x] = true
       binField[i][x] = false
@@ -108,6 +112,11 @@ function horizontalMove(direction) {
   }
 }
 
+function generateNewActive() {
+  const binField = getField()
+  console.log(_.countBy(['foo', 'foo', 'bar', 'bon'])['foo'])
+}
+
 function repl(position, active, x) {
   active.style.transform = `translate(0, 0)`
   rows[position].querySelectorAll('.cell')[x].append(active)
@@ -118,5 +127,5 @@ function isEmpty(y, x) {
     return false
   }
   const cell = rows[y].querySelectorAll('.cell')[x].querySelector('.active')
-  return cell === null
+  return cell === null // TODO contains
 }
