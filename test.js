@@ -1,5 +1,7 @@
 const SIZE_OF_FIELD = 4
 
+const colors = ['#EEE4DA', '#EDE0C8', '#F2B179', '#F59563', '#F67C5F', '#F65E3B', '#EDCF72', '#EDCC61']
+
 const rows = document.querySelectorAll('.row')
 const board = document.querySelector('.board')
 
@@ -8,6 +10,8 @@ document.addEventListener('keyup', event => {
   createNewSquare()
 })
 
+createNewSquare()
+createNewSquare()
 
 function move(direction) {
   if (!direction.includes('Arrow')) {
@@ -18,7 +22,7 @@ function move(direction) {
     actives = actives.reverse()
   }
   for (currentCell of actives) {
-    const emptyCells = getEmptyCells()
+    const emptyCells = getOtherEmptyCells(currentCell)
     const cells = contains(['ArrowRight', 'ArrowLeft'], direction) ?
                     currentCell.parentNode.querySelectorAll('.cell') : 
                     getElementsFromCol(currentCell)
@@ -39,9 +43,20 @@ function move(direction) {
     }
     if (index !== newIndex) {
       const active = currentCell.querySelector('.active')
+      const oldActive = cells[newIndex].querySelector('.active')
+      if (oldActive !== null) {
+        oldActive.parentNode.removeChild(oldActive)
+        const number = parseInt(active.innerHTML)
+        active.innerHTML = `${number * 2}`
+        const colorIndex = Math.round(Math.log(number) / Math.log(2))
+        if (colorIndex > 1) {
+          active.style.color = '#F9F6F2'
+        }
+        active.style.background = colors[colorIndex]
+      }
       // animateMove(active, direction, index, newIndex)
       replaceElement(cells[newIndex], active)
-      // Ошибка в том, что я сначала обрабатываю новый элемент, а затем уже перемещаю старый
+      // Ошибка в том, что я сначала обрабатываю новый элемент, а затем уже перемещаю старый. чтобы исправить её, нужно собрать данные в массив и отдельно перемещать элементы из него
     }
   }
 }
@@ -58,8 +73,11 @@ function createNewSquare() {
     const index = getRandomNumber(0, emptyCells.length)
     const square = document.createElement('div')
     square.classList.add('active')
-    if (getRandomNumber(0, 2) == 0) {
-      square.style.background = 'rgb(220, 180, 160)'
+    square.innerHTML = '2'
+    square.style.background = colors[0]
+    if (getRandomNumber(0, 10) == 0) {
+      square.style.background = colors[1]
+      square.innerHTML = '4'
     }
     emptyCells[index].append(square)
   }
@@ -87,6 +105,12 @@ function getAllCells() {
 function getEmptyCells() {
   const allCells = getAllCells()
   return allCells.filter(cell => cell.querySelector('.active') === null)
+}
+
+function getOtherEmptyCells(element) {
+  const allCells = getAllCells()
+  return allCells.filter(cell => cell.querySelector('.active') === null ||
+    cell.querySelector('.active').innerHTML === element.querySelector('.active').innerHTML)
 }
 
 function getActives() {
